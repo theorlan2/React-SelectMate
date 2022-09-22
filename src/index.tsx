@@ -1,12 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import SelectMate from './components/SelectMate'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+  <SelectMate
+   defaultText="Seleccioná una Opcion" defaultValue="1"
+    options={
+      [
+        {
+          value:1,
+          label:'Opcion 1',
+          selected: false
+        },
+        {
+          value:2,
+          label:'Opcion 2',
+          selected: false
+        },
+      ]
+    }
+ / >
   </React.StrictMode>,
   document.getElementById('root')
 );
