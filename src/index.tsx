@@ -6,6 +6,8 @@ import SelectMate from './components/SelectMate'
 
 ReactDOM.render(
   <React.StrictMode>
+<div className='container-example' >
+
   <SelectMate
    defaultText="Seleccioná una Opcion" defaultValue="1"
     options={
@@ -20,9 +22,15 @@ ReactDOM.render(
           label:'Opcion 2',
           selected: false
         },
+        {
+          value:3,
+          label:'Opcion 5',
+          selected: false
+        },
       ]
     }
- / >
+    />
+    </div>
   </React.StrictMode>,
   document.getElementById('root')
 );

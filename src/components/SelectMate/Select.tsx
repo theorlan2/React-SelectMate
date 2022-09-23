@@ -12,6 +12,7 @@ export const Select = styled.select`
 type Props = {
   isMovil: boolean;
   isActive: boolean;
+  indexSelected: number;
   defaultValue: string | undefined;
   options: { value: any; label: string; selected: boolean }[];
   onChangeEvent?: (event: ChangeEvent<{ selectedIndex: number }>) => void;
@@ -21,7 +22,6 @@ type Props = {
 export const SelectNative: FunctionComponent<Props> = (props) => {
   const selectRef = useRef(null as unknown as HTMLSelectElement);
 
-  //
   function changeEvent(event: ChangeEvent<{ selectedIndex: number }>) {
     if (event && event.target) {
       let indx = event.target.selectedIndex;
@@ -75,13 +75,17 @@ export const SelectNative: FunctionComponent<Props> = (props) => {
     openSelectOnMovil();
   }, [props.isActive]);
 
+  useEffect(() => {
+    selectRef.current.selectedIndex = props.indexSelected;
+  }, [props.indexSelected]);
+
   return (
     <Select
       ref={selectRef}
       defaultValue={props.defaultValue}
-      onChange={(evento: ChangeEvent<{ selectedIndex: number }>) =>
-        changeEvent(evento)
-      }
+      onChange={(evento: ChangeEvent<{ selectedIndex: number }>) => {
+        changeEvent(evento);
+      }}
     >
       {props.options.map((_option, indx) => (
         <option key={`option-${indx}`} value={_option.value}>

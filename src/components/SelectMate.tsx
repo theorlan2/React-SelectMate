@@ -5,19 +5,22 @@ import {
   useRef,
   useState,
 } from "react";
-import { ThemeProvider } from "styled-components";
+import  { ThemeProvider } from "styled-components";
+// Components
+import { ContainerListOptions } from "./SelectMate/ContainerListOptions";
+import { ContainerSelectMate } from "./SelectMate/ContainerSelectMate";
+import { IconArrow } from "./SelectMate/IconArrow";
+import { SelectNative } from "./SelectMate/Select";
+import TextSelectOption from "./SelectMate/TextSelectedOption";
+// utils
 import {
   checkIsNavigatorMovil,
   getChild,
   getFirstChild,
 } from "../commons/utils";
-import { theme } from "../theme";
-import { ContainerListOptions } from "./SelectMate/ContainerListOptions";
-import { ContainerSelectMate } from "./SelectMate/ContainerSelectMate";
-import { IconArrow } from "./SelectMate/IconArrow";
-import { SelectNative } from "./SelectMate/Select";
+import { theme } from "../commons/theme";
 
-let cont = 0;
+
 type PropsSelectMate = {
   options: { value: any; label: string; selected: boolean }[];
   defaultText?: string;
@@ -27,15 +30,12 @@ type PropsSelectMate = {
 };
 
 const SelectMate: FunctionComponent<PropsSelectMate> = (props) => {
-  const defaultText = useRef("Seleccioná una Opcion");
+  const defaultText = useRef("Select an Option");
   const [isActive, setIsActive] = useState(false);
-  const [value, setValue] = useState(null as unknown);
-  const [indexSelect, setIndexSelect] = useState(0);
+  const [value, setValue] = useState("");
+  const [indexSelected, setIndexSelected] = useState(0);
   const [isMovil, setIsMovil] = useState(false);
-
   useEffect(() => {
-    cont = cont + 1;
-    setIndexSelect(cont);
     setIsMovil(checkIsNavigatorMovil());
     createListOptionsFromChild();
   }, []);
@@ -64,29 +64,15 @@ const SelectMate: FunctionComponent<PropsSelectMate> = (props) => {
   }
 
   // Method to select the option
-  function selectOption(indx: number, selectNumber: number) {
-    if (isMovil) {
-      selectNumber = selectNumber - 1;
-    }
-    const select_optiones = document.querySelectorAll(
-      "[data-indx-select='" + indexSelect + "']  > select > option"
-    ) as NodeListOf<HTMLOptionElement>;
-
-    select_optiones[indx].selected = true;
-    setIsActive(false);
-    defaultText.current = select_optiones[indx].textContent as string;
-    setValue(select_optiones[indx].value);
-    closeSelect();
+  function selectOption(indx: number, label: string) {
+    setIndexSelected(indx);
+    defaultText.current = label as string;
   } // fin SelectOption
 
   // Method to open the Select
   function openSelect() {
-   if(!isMovil) {
-      if (isActive === false) {
-        setIsActive(true);
-      } else {
-        setIsActive(false);
-      }
+    if (!isMovil) {
+      setIsActive(!isActive);
     }
   }
 
@@ -98,28 +84,29 @@ const SelectMate: FunctionComponent<PropsSelectMate> = (props) => {
   return (
     <ThemeProvider theme={theme}>
       <ContainerSelectMate
-        className={props.className}
-        data-indx-select={indexSelect}
+        className={`${props.className}`}
+        role='select-mate'
         data-selec-open={isActive}
         onClick={openSelect}
       >
         <SelectNative
+          indexSelected={indexSelected}
           isMovil={isMovil}
           isActive={isActive}
-          defaultValue={props.defaultValue}
-          onChange={(value: any) => setValue(value)}
+          defaultValue={props.defaultValue || value}
+          onChange={(value: any) => {
+            setValue(value);
+            closeSelect();
+          }}
           options={props.options}
         />
-        <p className="select_opcion">
+        <TextSelectOption>
           {defaultText.current ? defaultText.current : props.defaultText}
-        </p>
+        </TextSelectOption>
 
         <IconArrow isActive={isActive} />
         <ContainerListOptions
-          selectOption={(indx, _indexSelect) =>
-            selectOption(indx, _indexSelect)
-          }
-          indexSelect={indexSelect}
+          selectOption={(indx, label) => selectOption(indx, label)}
           options={props.options}
           isActive={isActive}
         ></ContainerListOptions>

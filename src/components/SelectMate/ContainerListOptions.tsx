@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef } from "react";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 export const ContainerOptions = styled.div`
@@ -58,29 +58,29 @@ const OptionElement = styled.li<OptionProps>`
 type ContainerListOptionsProps = {
   isActive: boolean;
   options: { value: any; label: string; selected: boolean }[];
-  indexSelect: number;
-  selectOption: (indx: number, selectNumber: number) => void;
+  selectOption: (indx: number, label: string) => void;
 };
 
 export const ContainerListOptions: FunctionComponent<
   ContainerListOptionsProps
-> = (props) => {
-  useEffect(() => {
-    if (props.isActive) {
-      getHeightOfElements();
-    } else {
-      heightUl.current = 0;
+  > = (props) => {
+    useEffect(() => {
+      if (props.isActive) {
+        getHeightOfElements();
+      } else {
+        setHeightUl(0);
     }
+    
   }, [props.isActive]);
-
+  
   const UlRef = useRef(null as unknown as HTMLUListElement);
-  const heightUl = useRef(0);
+  const [heightUl,setHeightUl] = useState(0);
 
   // Method to open the Select
   function getHeightOfElements() {
     const ulWhitLiElements =
       //@ts-ignore
-      UlRef.current && (UlRef.current.children as NodeListOf<HTMLLIElement>);
+      UlRef && (UlRef.current.children as NodeListOf<HTMLLIElement>);
     let _heightUl = 0;
 
     if (ulWhitLiElements) {
@@ -88,25 +88,24 @@ export const ContainerListOptions: FunctionComponent<
         _heightUl += ulWhitLiElements[i].offsetHeight;
       }
     }
-    heightUl.current = _heightUl;
+    setHeightUl(_heightUl);
   }
 
-  function selectOption(indx: number, selectNumber: number) {  
-    props.selectOption(indx, selectNumber);
+  function selectOption(indx: number,  label: string) {  
+    props.selectOption(indx, label);
   } // fin SelectOption
 
   return (
     <ContainerOptions>
-      <ULListOptions ref={UlRef} style={{ height: heightUl.current }}>
+      <ULListOptions ref={UlRef} style={{ height: heightUl }}>
         {Array.isArray(props.options) &&
           props.options.map((item, i) => (
             <OptionElement
+              role={`select-mate-option-${i}`}
               key={`${i}-list-item`}
-              data-index={props.indexSelect}
-              data-selec-index={props.indexSelect}
-              selected={props.options[i].selected}
-              className={props.options[i].selected === true ? "active" : ""}
-              onClick={() => selectOption(i, props.indexSelect)}
+              selected={item.selected}
+              className={item.selected === true ? "active" : ""}
+              onClick={() => selectOption(i, item.label)}
             >
               {props.options[i].label}
             </OptionElement>
