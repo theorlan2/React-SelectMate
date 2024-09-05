@@ -1,27 +1,34 @@
 import { ChangeEvent, FunctionComponent, useEffect, useRef } from "react";
 import styled from "styled-components";
 
+import { OptionI } from "../../types/select";
+
 export const Select = styled.select`
   position: absolute;
   overflow: hidden;
   height: 0px;
   opacity: 0;
   z-index: -1;
+
+  @media (max-width: 464px) {
+    height: 100%;
+    width: 100%;
+    opacity: 0.01;
+    z-index: 1;
+  }
 `;
 
 type Props = {
-  isMovil: boolean;
-  isActive: boolean;
+  uid: string;
   indexSelected: number;
   defaultValue: string | undefined;
-  options: { value: any; label: string; selected: boolean }[];
+  options: OptionI[];
   onChangeEvent?: (event: ChangeEvent<{ selectedIndex: number }>) => void;
-  onChange: (value: any) => void;
+  onChange: (label: string, index: number) => void;
 };
 
 export const SelectNative: FunctionComponent<Props> = (props) => {
   const selectRef = useRef(null as unknown as HTMLSelectElement);
-
   function changeEvent(event: ChangeEvent<{ selectedIndex: number }>) {
     if (event && event.target) {
       let indx = event.target.selectedIndex;
@@ -29,51 +36,11 @@ export const SelectNative: FunctionComponent<Props> = (props) => {
     }
   }
 
-  // Method to change the selected option when changing in mobile
   function changeOption(index: number) {
-    if (props.isMovil) {
-      //selc = selc -1;
-    }
-    const select_optiones = selectRef.current && selectRef.current.options;
-    select_optiones[index].selected = true;
-    props.onChange(select_optiones[index].value);
+    const select_options = selectRef.current && selectRef.current.options;
+    select_options[index].selected = true;
+    props.onChange(props.options[index].label, index);
   }
-
-  function openSelectOnMovil() {
-    if (props.isMovil) {
-      if (window.document.createEvent) {
-        // All
-        const evt = window.document.createEvent("MouseEvents");
-        evt.initMouseEvent(
-          "mousedown",
-          false,
-          true,
-          window,
-          0,
-          0,
-          0,
-          0,
-          0,
-          false,
-          false,
-          false,
-          false,
-          0,
-          null
-        );
-        selectRef.current.dispatchEvent(evt);
-        // @ts-ignore
-      } else if (selectRef.current.fireEvent) {
-        // IE
-        // @ts-ignore
-        selectRef.current.fireEvent("onmousedown");
-      }
-    }
-  }
-
-  useEffect(() => {
-    openSelectOnMovil();
-  }, [props.isActive]);
 
   useEffect(() => {
     selectRef.current.selectedIndex = props.indexSelected;
@@ -82,6 +49,7 @@ export const SelectNative: FunctionComponent<Props> = (props) => {
   return (
     <Select
       ref={selectRef}
+      id={props.uid}
       defaultValue={props.defaultValue}
       onChange={(evento: ChangeEvent<{ selectedIndex: number }>) => {
         changeEvent(evento);

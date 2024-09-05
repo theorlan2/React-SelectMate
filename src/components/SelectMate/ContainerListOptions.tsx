@@ -1,5 +1,6 @@
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { OptionI } from "../../types/select";
 
 export const ContainerOptions = styled.div`
   position: relative;
@@ -30,7 +31,6 @@ export const ULListOptions = styled.ul`
 `;
 
 type OptionProps = {
-  selected: boolean;
   className: string;
 };
 
@@ -52,31 +52,28 @@ const OptionElement = styled.li<OptionProps>`
   &:hover {
     background-color: ${(props) => props.theme.bacgroundOptionActive};
   }
-  
 `;
 
 type ContainerListOptionsProps = {
   isActive: boolean;
-  options: { value: any; label: string; selected: boolean }[];
-  selectOption: (indx: number, label: string) => void;
+  options: OptionI[];
+  selectOption: (index: number, label: string) => void;
 };
 
 export const ContainerListOptions: FunctionComponent<
   ContainerListOptionsProps
-  > = (props) => {
-    useEffect(() => {
-      if (props.isActive) {
-        getHeightOfElements();
-      } else {
-        setHeightUl(0);
+> = (props) => {
+  useEffect(() => {
+    if (props.isActive) {
+      getHeightOfElements();
+    } else {
+      setHeightUl(0);
     }
-    
   }, [props.isActive]);
-  
-  const UlRef = useRef(null as unknown as HTMLUListElement);
-  const [heightUl,setHeightUl] = useState(0);
 
-  // Method to open the Select
+  const UlRef = useRef(null as unknown as HTMLUListElement);
+  const [heightUl, setHeightUl] = useState(0);
+
   function getHeightOfElements() {
     const ulWhitLiElements =
       //@ts-ignore
@@ -91,10 +88,6 @@ export const ContainerListOptions: FunctionComponent<
     setHeightUl(_heightUl);
   }
 
-  function selectOption(indx: number,  label: string) {  
-    props.selectOption(indx, label);
-  } // fin SelectOption
-
   return (
     <ContainerOptions>
       <ULListOptions ref={UlRef} style={{ height: heightUl }}>
@@ -103,9 +96,10 @@ export const ContainerListOptions: FunctionComponent<
             <OptionElement
               role={`select-mate-option-${i}`}
               key={`${i}-list-item`}
-              selected={item.selected}
               className={item.selected === true ? "active" : ""}
-              onClick={() => selectOption(i, item.label)}
+              onClick={() =>
+                props.selectOption && props.selectOption(i, item.label)
+              }
             >
               {props.options[i].label}
             </OptionElement>
