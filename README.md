@@ -1,6 +1,7 @@
 # SelectMate
 
 ## images
+<img src="/resources/image-mate-select.png" width="320" alt="Screenshot storybook">
 
 
 ## Usage
