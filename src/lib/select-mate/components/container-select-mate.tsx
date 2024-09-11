@@ -1,8 +1,6 @@
 import styled from "styled-components";
 
-type Props = {};
-
-export const ContainerSelectMate = styled.button<Props>`
+export const ContainerSelectMate = styled.button`
   border: none;
   text-align: left;
   position: relative;

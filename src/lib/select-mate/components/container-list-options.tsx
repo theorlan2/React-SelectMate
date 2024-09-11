@@ -1,12 +1,12 @@
-import { FunctionComponent, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import { OptionI } from "../../types/select";
+import { FunctionComponent, useEffect, useRef, useState } from 'react'
+import styled from 'styled-components'
+import { OptionI } from '../select-mate.types'
 
 export const ContainerOptions = styled.div`
   position: relative;
   float: left;
   width: 100%;
-`;
+`
 
 export const ULListOptions = styled.ul`
   position: absolute;
@@ -28,11 +28,11 @@ export const ULListOptions = styled.ul`
   .active {
     background-color: $bacgroundOptionActive;
   }
-`;
+`
 
 type OptionProps = {
-  className: string;
-};
+  className: string
+}
 
 const OptionElement = styled.li<OptionProps>`
   width: 100%;
@@ -52,40 +52,36 @@ const OptionElement = styled.li<OptionProps>`
   &:hover {
     background-color: ${(props) => props.theme.bacgroundOptionActive};
   }
-`;
+`
 
 type ContainerListOptionsProps = {
-  isActive: boolean;
-  options: OptionI[];
-  selectOption: (index: number, label: string) => void;
-};
+  isActive: boolean
+  options: OptionI[]
+  selectOption: (index: number, label: string) => void
+}
 
-export const ContainerListOptions: FunctionComponent<
-  ContainerListOptionsProps
-> = (props) => {
+export const ContainerListOptions: FunctionComponent<ContainerListOptionsProps> = (props) => {
   useEffect(() => {
     if (props.isActive) {
-      getHeightOfElements();
+      getHeightOfElements()
     } else {
-      setHeightUl(0);
+      setHeightUl(0)
     }
-  }, [props.isActive]);
+  }, [props.isActive])
 
-  const UlRef = useRef(null as unknown as HTMLUListElement);
-  const [heightUl, setHeightUl] = useState(0);
+  const UlRef = useRef(null as unknown as HTMLUListElement)
+  const [heightUl, setHeightUl] = useState(0)
 
   function getHeightOfElements() {
-    const ulWhitLiElements =
-      //@ts-ignore
-      UlRef && (UlRef.current.children as NodeListOf<HTMLLIElement>);
-    let _heightUl = 0;
+    const ulWhitLiElements = UlRef && (UlRef.current.children as unknown as NodeListOf<HTMLLIElement>)
+    let _heightUl = 0
 
     if (ulWhitLiElements) {
       for (let i = 0; i < ulWhitLiElements.length; i++) {
-        _heightUl += ulWhitLiElements[i].offsetHeight;
+        _heightUl += ulWhitLiElements[i].offsetHeight
       }
     }
-    setHeightUl(_heightUl);
+    setHeightUl(_heightUl)
   }
 
   return (
@@ -96,15 +92,13 @@ export const ContainerListOptions: FunctionComponent<
             <OptionElement
               role={`select-mate-option-${i}`}
               key={`${i}-list-item`}
-              className={item.selected === true ? "active" : ""}
-              onClick={() =>
-                props.selectOption && props.selectOption(i, item.label)
-              }
+              className={item.selected === true ? 'active' : ''}
+              onClick={() => props.selectOption && props.selectOption(i, item.label)}
             >
               {props.options[i].label}
             </OptionElement>
           ))}
       </ULListOptions>
     </ContainerOptions>
-  );
-};
+  )
+}
